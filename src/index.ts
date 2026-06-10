@@ -22,6 +22,10 @@
 
 import OpenAI, { type ClientOptions } from 'openai';
 
+import { GridRaw } from './grid.js';
+
+export { GridRaw, deriveV2Base } from './grid.js';
+
 export const DEFAULT_BASE_URL = 'https://api.aipowergrid.io/v1';
 export const API_KEY_ENV = 'AIPG_API_KEY';
 
@@ -38,6 +42,12 @@ export interface AIPGOptions extends ClientOptions {
  * SDK, plus `.onlineModels()` to see what's servable right now.
  */
 export class AIPG extends OpenAI {
+  /**
+   * Raw-Grid access (video, img2img, ControlNet, LoRAs) beyond the
+   * OpenAI-compatible surface. See {@link GridRaw}.
+   */
+  readonly grid: GridRaw;
+
   constructor(options: AIPGOptions = {}) {
     const apiKey =
       options.apiKey ??
@@ -50,11 +60,9 @@ export class AIPG extends OpenAI {
       );
     }
 
-    super({
-      ...options,
-      apiKey,
-      baseURL: options.baseURL ?? DEFAULT_BASE_URL,
-    });
+    const baseURL = options.baseURL ?? DEFAULT_BASE_URL;
+    super({ ...options, apiKey, baseURL });
+    this.grid = new GridRaw(apiKey, baseURL);
   }
 
   /**

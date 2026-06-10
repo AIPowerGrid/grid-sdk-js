@@ -47,6 +47,37 @@ console.log(await client.onlineModels());
 
 An empty array means no workers are connected — requests will 503 until one is.
 
+## Video, img2img, ControlNet, LoRAs — the full Grid
+
+The OpenAI-compatible surface covers text and basic txt2img. For everything
+else the Grid can do, use `client.grid`, which talks to the native queue:
+
+```ts
+const client = new AIPG();
+
+// Video — param names (length, fps, motion) depend on the model:
+const result = await client.grid.video('a timelapse of a city at night', {
+  models: ['LTX-2'],
+  width: 768,
+  height: 512,
+  params: { length: 97 },
+});
+
+// img2img / ControlNet / LoRAs — anything the workers support:
+const img = await client.grid.image('make it watercolor', {
+  models: ['FLUX.1-dev'],
+  sourceImage: '<base64>',
+  params: { loras: [{ name: 'watercolor', model: 1.0 }] },
+});
+
+// Or full control with a raw payload:
+const raw = await client.grid.generate({ prompt: '...', models: ['...'], params: {} });
+```
+
+`client.grid` submits, polls, and returns the finished result. Pass
+`{ wait: false }` to get the job id back immediately and poll yourself with
+`client.grid.status(jobId)`.
+
 ## It's just OpenAI underneath
 
 `AIPG` extends the `openai` client, so anything the OpenAI SDK does — images,
