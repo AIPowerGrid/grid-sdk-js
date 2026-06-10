@@ -10,7 +10,7 @@ OpenAI SDK works unchanged.
 ## Install
 
 ```bash
-npm install aipg
+npm install aipowergrid
 ```
 
 ## Quick start

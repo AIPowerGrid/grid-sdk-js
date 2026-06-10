@@ -1,5 +1,5 @@
 {
-  "name": "aipg",
+  "name": "aipowergrid",
   "version": "0.1.0",
   "description": "JavaScript/TypeScript SDK for AI Power Grid — free, decentralized, OpenAI-compatible AI inference.",
   "type": "module",
