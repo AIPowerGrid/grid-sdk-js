@@ -29,26 +29,30 @@ export { GridRaw, deriveV2Base } from './grid.js';
 export const DEFAULT_BASE_URL = 'https://api.aipowergrid.io/v1';
 export const API_KEY_ENV = 'AIPG_API_KEY';
 
-export interface AIPGOptions extends ClientOptions {
+export interface GridOptions extends ClientOptions {
   /** Grid API key. Falls back to the AIPG_API_KEY environment variable. */
   apiKey?: string;
   /** Override the endpoint. Defaults to https://api.aipowergrid.io/v1 */
   baseURL?: string;
 }
 
+/** @deprecated use {@link GridOptions} */
+export type AIPGOptions = GridOptions;
+
 /**
  * AI Power Grid client. Drop-in for `openai`'s default client, pre-configured
  * for the Grid. Use `.chat`, `.images`, `.models` exactly as with the OpenAI
- * SDK, plus `.onlineModels()` to see what's servable right now.
+ * SDK, plus `.onlineModels()` for what's servable right now and `.grid` for
+ * video / advanced image generation.
  */
-export class AIPG extends OpenAI {
+export class Grid extends OpenAI {
   /**
    * Raw-Grid access (video, img2img, ControlNet, LoRAs) beyond the
    * OpenAI-compatible surface. See {@link GridRaw}.
    */
   readonly grid: GridRaw;
 
-  constructor(options: AIPGOptions = {}) {
+  constructor(options: GridOptions = {}) {
     const apiKey =
       options.apiKey ??
       (typeof process !== 'undefined' ? process.env?.[API_KEY_ENV] : undefined);
@@ -77,4 +81,7 @@ export class AIPG extends OpenAI {
   }
 }
 
-export default AIPG;
+/** @deprecated `Grid` is the preferred name; kept so existing code resolves. */
+export const AIPG = Grid;
+
+export default Grid;

@@ -10,7 +10,7 @@ OpenAI SDK works unchanged.
 ## Install
 
 ```bash
-npm install aipowergrid
+npm install grid-ai
 ```
 
 ## Quick start
@@ -19,9 +19,9 @@ Get a free API key at [api.aipowergrid.io/register](https://api.aipowergrid.io/r
 then set it as `AIPG_API_KEY`:
 
 ```ts
-import { AIPG } from 'aipg';
+import { Grid } from 'grid-ai';
 
-const client = new AIPG(); // reads AIPG_API_KEY from the environment
+const client = new Grid(); // reads AIPG_API_KEY from the environment
 
 const stream = await client.chat.completions.create({
   model: 'grid/llama-3.3-70b-versatile',
@@ -40,7 +40,7 @@ The Grid's available models change as workers connect and disconnect. Don't
 hardcode a model blindly — ask which ones are servable right now:
 
 ```ts
-const client = new AIPG();
+const client = new Grid();
 console.log(await client.onlineModels());
 // ['grid/llama-3.3-70b-versatile', 'grid/qwen3-32b', ...]
 ```
@@ -53,7 +53,7 @@ The OpenAI-compatible surface covers text and basic txt2img. For everything
 else the Grid can do, use `client.grid`, which talks to the native queue:
 
 ```ts
-const client = new AIPG();
+const client = new Grid();
 
 // Video — param names (length, fps, motion) depend on the model:
 const result = await client.grid.video('a timelapse of a city at night', {
@@ -80,7 +80,7 @@ const raw = await client.grid.generate({ prompt: '...', models: ['...'], params:
 
 ## It's just OpenAI underneath
 
-`AIPG` extends the `openai` client, so anything the OpenAI SDK does — images,
+`Grid` extends the `openai` client, so anything the OpenAI SDK does — images,
 tool calling, structured output, the full `.chat` / `.images` / `.models`
 surface — works here too. You can also point existing OpenAI code at the Grid
 by setting `baseURL: 'https://api.aipowergrid.io/v1'` if you'd rather not
@@ -90,9 +90,9 @@ switch packages.
 
 | | |
 |---|---|
-| `new AIPG({ apiKey })` | Explicit key (overrides env) |
+| `new Grid({ apiKey })` | Explicit key (overrides env) |
 | `AIPG_API_KEY` | Env var read when no key is passed |
-| `new AIPG({ baseURL })` | Override the endpoint (default `https://api.aipowergrid.io/v1`) |
+| `new Grid({ baseURL })` | Override the endpoint (default `https://api.aipowergrid.io/v1`) |
 
 All other [`openai` client options](https://github.com/openai/openai-node) are
 passed straight through.
