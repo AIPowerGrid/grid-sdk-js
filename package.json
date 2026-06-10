@@ -1,0 +1,39 @@
+{
+  "name": "aipg",
+  "version": "0.1.0",
+  "description": "JavaScript/TypeScript SDK for AI Power Grid — free, decentralized, OpenAI-compatible AI inference.",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": ["ai", "llm", "inference", "openai", "decentralized", "aipg", "aipowergrid"],
+  "license": "MIT",
+  "author": "AI Power Grid",
+  "homepage": "https://aipowergrid.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AIPowerGrid/aipg-sdk-js.git"
+  },
+  "dependencies": {
+    "openai": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
