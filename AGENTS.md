@@ -51,7 +51,7 @@ surface does not cover. Published to npm as `grid-ai`.
 
 ## Local Contracts
 
-- **Inherit org engineering standards:** `/Users/j/fix-axios-vuln/aipg-documentation/engineering-standards/`
+- **Inherit org engineering standards:** `aipg-documentation/engineering-standards/`
   (core + git + the matching language file).
 - **Thin over `openai`:** the OpenAI-compatible surface (`.chat`, `.images`, `.models`, …)
   comes from extending `OpenAI`. Do not reimplement it. Only Grid-specific additions belong
