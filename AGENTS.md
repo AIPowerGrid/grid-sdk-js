@@ -39,7 +39,8 @@ concrete detail in children. Delete stale notes instead of explaining history.
 The JS/TS client for the AI Power Grid API. The Grid speaks the OpenAI protocol, so the
 SDK is a thin subclass of the official `openai` package pre-pointed at the Grid, plus a
 native escape hatch (`client.grid`) for video / advanced image generation the OpenAI
-surface does not cover. Published to npm as `grid-ai`.
+surface does not cover. Published to npm as `grid-ai`. Co-canonical peer of the Python SDK
+`../grid-sdk-python` (PyPI `grid-sdk`) — keep the two SDKs' surfaces aligned.
 
 ## Ownership
 
@@ -48,6 +49,8 @@ surface does not cover. Published to npm as `grid-ai`.
 - `test/` — Vitest unit tests (`client.test.ts`, `grid.test.ts`). Mirror `src/` one-to-one.
 - `dist/` — `tsc` build output. Generated; never edit by hand.
 - `package.json` / `tsconfig.json` — manifest + TS config (ESM, strict, target ES2021).
+  Note: `package.json` declares `"license": "MIT"` but the repo `LICENSE` file is Apache-2.0.
+  A real mismatch — flag for a human to reconcile; do not silently change either.
 
 ## Local Contracts
 
@@ -60,8 +63,10 @@ surface does not cover. Published to npm as `grid-ai`.
   are deprecated aliases kept for resolution — do not promote them.
 - **Defaults:** key from `AIPG_API_KEY` env when not passed; base URL
   `https://api.aipowergrid.io/v1`. A missing key throws at construction.
-- **Two endpoint families:** OpenAI-compatible at `/v1`; native Grid queue at `/api/v2`
-  (derived from the `/v1` base via `deriveV2Base`). Keep them consistent.
+- **One base, `/v1` throughout:** the OpenAI-compatible surface (`.chat`, `.images`, …) and the
+  native `client.grid` media calls both live under `/v1`. `GridRaw` POSTs SYNCHRONOUSLY to
+  `/v1/images/generations` and `/v1/videos/generations` (the call returns the finished result;
+  no submit/poll). The retired horde `/api/v2` async queue is gone — do not reintroduce it.
 - **ESM only:** `"type": "module"`; intra-package imports use the `.js` extension.
 
 ## Work Guidance
