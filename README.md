@@ -24,7 +24,7 @@ import { Grid } from 'grid-ai';
 const client = new Grid(); // reads AIPG_API_KEY from the environment
 
 const stream = await client.chat.completions.create({
-  model: 'grid/llama-3.3-70b-versatile',
+  model: 'gpt-oss-120b',
   messages: [{ role: 'user', content: 'Explain AI Power Grid in one line.' }],
   stream: true,
 });
@@ -42,7 +42,7 @@ hardcode a model blindly — ask which ones are servable right now:
 ```ts
 const client = new Grid();
 console.log(await client.onlineModels());
-// ['grid/llama-3.3-70b-versatile', 'grid/qwen3-32b', ...]
+// ['gpt-oss-120b', 'qwen3-27b', ...]
 ```
 
 An empty array means no workers are connected — requests will 503 until one is.
@@ -57,7 +57,7 @@ const client = new Grid();
 
 // Video — param names (length, fps, motion) depend on the model:
 const result = await client.grid.video('a timelapse of a city at night', {
-  models: ['LTX-2'],
+  models: ['LTX-2.3'],
   width: 768,
   height: 512,
   params: { length: 97 },
@@ -65,7 +65,7 @@ const result = await client.grid.video('a timelapse of a city at night', {
 
 // img2img / ControlNet / LoRAs — anything the workers support:
 const img = await client.grid.image('make it watercolor', {
-  models: ['FLUX.1-dev'],
+  models: ['FLUX.2 Klein 4B FP8'],
   sourceImage: '<base64>',
   params: { loras: [{ name: 'watercolor', model: 1.0 }] },
 });

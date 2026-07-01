@@ -24,7 +24,8 @@ import OpenAI, { type ClientOptions } from 'openai';
 
 import { GridRaw } from './grid.js';
 
-export { GridRaw, deriveV2Base } from './grid.js';
+export { GridRaw } from './grid.js';
+export type { GenerateOptions, ImageOptions, VideoOptions } from './grid.js';
 
 export const DEFAULT_BASE_URL = 'https://api.aipowergrid.io/v1';
 export const API_KEY_ENV = 'AIPG_API_KEY';
