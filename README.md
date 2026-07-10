@@ -15,8 +15,8 @@ npm install grid-ai
 
 ## Quick start
 
-Get a free API key at [api.aipowergrid.io/register](https://api.aipowergrid.io/register),
-then set it as `AIPG_API_KEY`:
+Sign in at the [Grid developer console](https://console.aipowergrid.io/dashboard/api-key),
+create an API key, then set it as `AIPG_API_KEY`:
 
 ```ts
 import { Grid } from 'grid-ai';
@@ -49,18 +49,20 @@ An empty array means no workers are connected — requests will 503 until one is
 
 ## Video, img2img, ControlNet, LoRAs — the full Grid
 
-The OpenAI-compatible surface covers text and basic txt2img. For everything
-else the Grid can do, use `client.grid`, which talks to the native queue:
+The OpenAI-compatible surface covers text and basic txt2img. For the full media
+parameter surface, use `client.grid`, which calls the synchronous `/v1` image
+and video endpoints:
 
 ```ts
 const client = new Grid();
 
-// Video — param names (length, fps, motion) depend on the model:
+// Video:
 const result = await client.grid.video('a timelapse of a city at night', {
-  models: ['LTX-2.3'],
+  model: 'LTX-2.3',
   width: 768,
   height: 512,
-  params: { length: 97 },
+  seconds: 4,
+  fps: 24,
 });
 
 // img2img / ControlNet / LoRAs — anything the workers support:
@@ -74,9 +76,9 @@ const img = await client.grid.image('make it watercolor', {
 const raw = await client.grid.generate({ prompt: '...', models: ['...'], params: {} });
 ```
 
-`client.grid` submits, polls, and returns the finished result. Pass
-`{ wait: false }` to get the job id back immediately and poll yourself with
-`client.grid.status(jobId)`.
+`client.grid` waits for the synchronous Grid response and returns the finished
+OpenAI-shaped result. Use `timeoutMs` for long media jobs; there is no SDK
+submit/poll mode on this `/v1` client.
 
 ## It's just OpenAI underneath
 
@@ -100,7 +102,7 @@ passed straight through.
 ## Links
 
 - [Docs](https://aipowergrid.io/docs)
-- [Get a free API key](https://api.aipowergrid.io/register)
+- [Get an API key](https://console.aipowergrid.io/dashboard/api-key)
 - [Discord](https://discord.gg/W9D8j6HCtC)
 
 ## License

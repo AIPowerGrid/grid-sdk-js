@@ -49,8 +49,7 @@ surface does not cover. Published to npm as `grid-ai`. Co-canonical peer of the 
 - `test/` — Vitest unit tests (`client.test.ts`, `grid.test.ts`). Mirror `src/` one-to-one.
 - `dist/` — `tsc` build output. Generated; never edit by hand.
 - `package.json` / `tsconfig.json` — manifest + TS config (ESM, strict, target ES2021).
-  Note: `package.json` declares `"license": "MIT"` but the repo `LICENSE` file is Apache-2.0.
-  A real mismatch — flag for a human to reconcile; do not silently change either.
+  Package metadata, source SPDX headers, and `LICENSE` all use MIT.
 
 ## Local Contracts
 
@@ -84,3 +83,4 @@ surface does not cover. Published to npm as `grid-ai`. Co-canonical peer of the 
 ## Child DOX Index
 
 - [src/AGENTS.md](src/AGENTS.md) — SDK source: the `Grid` client + `GridRaw` native access.
+- [test/AGENTS.md](test/AGENTS.md) — mocked SDK contract tests.
