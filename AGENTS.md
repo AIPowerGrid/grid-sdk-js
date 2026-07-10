@@ -79,6 +79,7 @@ surface does not cover. Published to npm as `grid-ai`. Co-canonical peer of the 
 
 - `npm run build` — `tsc` must compile clean under `strict`.
 - `npm test` — `vitest run`.
+- `npm audit` must report zero known vulnerabilities before publishing.
 
 ## Child DOX Index
 
