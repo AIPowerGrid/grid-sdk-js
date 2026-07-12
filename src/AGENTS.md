@@ -35,6 +35,8 @@ client behind `client.grid`.
   `censor_nsfw = !nsfw` and switches to `source_processing: 'img2img'` when `sourceImage`
   is given; `video` uses a longer default timeout (600s). Unknown/advanced fields must keep
   flowing through `params` unchanged — do not allowlist them.
+- `credits()` reads Core's canonical three-pocket account view. Never derive
+  promotional or daily balances in the SDK.
 
 ## Work Guidance
 

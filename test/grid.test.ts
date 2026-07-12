@@ -13,14 +13,19 @@ describe('client.grid wiring', () => {
 });
 
 describe('/v1 media requests', () => {
-  let calls: Array<{ url: string; body: any; headers: any }>;
+  let calls: Array<{ url: string; body: any; headers: any; method?: string }>;
 
   beforeEach(() => {
     calls = [];
     vi.stubGlobal(
       'fetch',
       vi.fn(async (url: string, init: any) => {
-        calls.push({ url, body: JSON.parse(init.body), headers: init.headers });
+        calls.push({
+          url,
+          body: init.body ? JSON.parse(init.body) : undefined,
+          headers: init.headers,
+          method: init.method,
+        });
         return {
           ok: true,
           status: 200,
@@ -30,6 +35,13 @@ describe('/v1 media requests', () => {
     );
   });
   afterEach(() => vi.unstubAllGlobals());
+
+  it('reads canonical account credit pockets', async () => {
+    const grid = new GridRaw('k', 'https://api.aipowergrid.io/v1');
+    await grid.credits();
+    expect(calls[0].url).toBe('https://api.aipowergrid.io/v1/account/credits');
+    expect(calls[0].headers.Authorization).toBe('Bearer k');
+  });
 
   it('image posts to /v1/images/generations in OpenAI shape', async () => {
     const grid = new GridRaw('k', 'https://api.aipowergrid.io/v1');

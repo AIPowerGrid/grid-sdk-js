@@ -25,7 +25,7 @@ import OpenAI, { type ClientOptions } from 'openai';
 import { GridRaw } from './grid.js';
 
 export { GridRaw } from './grid.js';
-export type { GenerateOptions, ImageOptions, VideoOptions } from './grid.js';
+export type { GenerateOptions, GridCredits, ImageOptions, VideoOptions } from './grid.js';
 
 export const DEFAULT_BASE_URL = 'https://api.aipowergrid.io/v1';
 export const API_KEY_ENV = 'AIPG_API_KEY';
@@ -61,7 +61,7 @@ export class Grid extends OpenAI {
     if (!apiKey) {
       throw new Error(
         `No API key provided. Pass { apiKey } or set the ${API_KEY_ENV} ` +
-          `environment variable. Get a free key at https://api.aipowergrid.io/register`,
+          `environment variable. Create a key at https://console.aipowergrid.io/dashboard/api-key`,
       );
     }
 

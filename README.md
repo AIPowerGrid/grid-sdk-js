@@ -47,6 +47,16 @@ console.log(await client.onlineModels());
 
 An empty array means no workers are connected — requests will 503 until one is.
 
+## Credits
+
+```ts
+const credits = await client.grid.credits();
+console.log(credits.total_spendable_usd);
+```
+
+This is Core's canonical promotional, daily-free, and purchased account view.
+The SDK does not maintain a local free-use counter.
+
 ## Video, img2img, ControlNet, LoRAs — the full Grid
 
 The OpenAI-compatible surface covers text and basic txt2img. For the full media

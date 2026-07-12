@@ -57,6 +57,15 @@ export interface VideoOptions extends GenerateOptions {
   params?: Record<string, unknown>;
 }
 
+export interface GridCredits {
+  promotional: { remaining_usd: number; active: boolean };
+  free: { remaining_usd: number; daily_cap_usd: number; active: boolean };
+  paid: { balance_usd: number };
+  total_spendable_usd: number;
+  total_preview_usd: number;
+  charging_enabled: boolean;
+}
+
 export class GridRaw {
   private headers: Record<string, string>;
   private base: string; // …/v1
@@ -87,6 +96,17 @@ export class GridRaw {
     } finally {
       clearTimeout(timer);
     }
+  }
+
+  /** Canonical promotional, daily-free, purchased, and spendable credit pockets. */
+  async credits(): Promise<GridCredits> {
+    const res = await fetch(`${this.base}/account/credits`, { headers: this.headers });
+    if (!res.ok) {
+      throw new Error(
+        `Grid /account/credits failed [${res.status}]: ${(await res.text()).slice(0, 300)}`,
+      );
+    }
+    return (await res.json()) as GridCredits;
   }
 
   /** Raw passthrough: POST an arbitrary body to a media endpoint

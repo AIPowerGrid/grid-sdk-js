@@ -29,7 +29,7 @@ describe('AIPG client', () => {
 
   it('throws a helpful error when no key is available', () => {
     expect(() => new AIPG()).toThrowError(/AIPG_API_KEY/);
-    expect(() => new AIPG()).toThrowError(/register/);
+    expect(() => new AIPG()).toThrowError(/console\.aipowergrid\.io\/dashboard\/api-key/);
   });
 
   it('defaults the base URL to the Grid', () => {
