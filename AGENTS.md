@@ -50,6 +50,8 @@ surface does not cover. Published to npm as `grid-ai`. Co-canonical peer of the 
 - `dist/` — `tsc` build output. Generated; never edit by hand.
 - `package.json` / `tsconfig.json` — manifest + TS config (ESM, strict, target ES2021).
   Package metadata, source SPDX headers, and `LICENSE` all use MIT.
+- **`.github/workflows/secret-scan.yml`, `.gitleaks.toml`, and `.gitleaksignore`** —
+  checksum-verified complete-history secret scanning with exact historical fingerprints only.
 
 ## Local Contracts
 
@@ -80,6 +82,8 @@ surface does not cover. Published to npm as `grid-ai`. Co-canonical peer of the 
 - `npm run build` — `tsc` must compile clean under `strict`.
 - `npm test` — `vitest run`.
 - `npm audit` must report zero known vulnerabilities before publishing.
+- `gitleaks git . --log-opts=HEAD --config .gitleaks.toml --redact --verbose`
+  scans the complete history reachable from the candidate commit.
 
 ## Child DOX Index
 
