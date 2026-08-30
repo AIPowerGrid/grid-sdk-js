@@ -1,7 +1,7 @@
 {
   "name": "grid-ai",
   "version": "0.1.1",
-  "description": "JavaScript/TypeScript SDK for AI Power Grid — free, decentralized, OpenAI-compatible AI inference.",
+  "description": "JavaScript/TypeScript SDK for AI Power Grid open-model, OpenAI-compatible inference.",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",

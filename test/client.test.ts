@@ -42,7 +42,7 @@ describe('AIPG client', () => {
     expect(client.baseURL).toContain('localhost:9999');
   });
 
-  it('is an OpenAI client (all OpenAI features come free)', () => {
+  it('is an OpenAI client (all OpenAI features remain available)', () => {
     expect(new AIPG({ apiKey: 'k' })).toBeInstanceOf(OpenAI);
   });
 
