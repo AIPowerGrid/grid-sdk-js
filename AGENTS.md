@@ -39,7 +39,7 @@ concrete detail in children. Delete stale notes instead of explaining history.
 The JS/TS client for the AI Power Grid API. The Grid speaks the OpenAI protocol, so the
 SDK is a thin subclass of the official `openai` package pre-pointed at the Grid, plus a
 native escape hatch (`client.grid`) for video / advanced image generation the OpenAI
-surface does not cover. Published to npm as `grid-ai`. Co-canonical peer of the Python SDK
+surface does not cover. Its npm package name is `grid-ai`. Co-canonical peer of the Python SDK
 `../grid-sdk-python` (PyPI `grid-sdk`) — keep the two SDKs' surfaces aligned.
 
 ## Ownership
@@ -52,6 +52,9 @@ surface does not cover. Published to npm as `grid-ai`. Co-canonical peer of the 
   Package metadata, source SPDX headers, and `LICENSE` all use MIT.
 - **`.github/workflows/secret-scan.yml`, `.gitleaks.toml`, and `.gitleaksignore`** —
   checksum-verified complete-history secret scanning with exact historical fingerprints only.
+- **`.github/workflows/release.yml`** — release-published, tag-bound npm trusted
+  publishing. It uses GitHub OIDC and the protected `npm` environment; registry
+  tokens do not belong in GitHub secrets.
 
 ## Local Contracts
 
@@ -69,6 +72,9 @@ surface does not cover. Published to npm as `grid-ai`. Co-canonical peer of the 
   `/v1/images/generations` and `/v1/videos/generations` (the call returns the finished result;
   no submit/poll). The retired horde `/api/v2` async queue is gone — do not reintroduce it.
 - **ESM only:** `"type": "module"`; intra-package imports use the `.js` extension.
+- **Release identity:** publish only a non-prerelease GitHub Release whose
+  `v<version>` tag exactly matches `package.json`. The release workflow must
+  build, test, audit, and inspect the package before OIDC publication.
 
 ## Work Guidance
 
@@ -82,6 +88,8 @@ surface does not cover. Published to npm as `grid-ai`. Co-canonical peer of the 
 - `npm run build` — `tsc` must compile clean under `strict`.
 - `npm test` — `vitest run`.
 - `npm audit` must report zero known vulnerabilities before publishing.
+- `npm pack --dry-run` must contain only the intended `dist`, README, license,
+  and package metadata payload.
 - `gitleaks git . --log-opts=HEAD --config .gitleaks.toml --redact --verbose`
   scans the complete history reachable from the candidate commit.
 
