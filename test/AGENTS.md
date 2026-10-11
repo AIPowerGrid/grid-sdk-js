@@ -14,6 +14,8 @@ media helper.
   Appearance cases keep reference PNG/audio/optional video and controls intact
   after reply loss; mixed opening pins reject before HTTP. These synthetic
   inline strings are wire fixtures, not decoded or native quality evidence.
+  Omitted/explicit reference attention is covered for both appearance modes;
+  lost accepted replies retain the exact original submission body.
 - `runtime.smoke.mjs` - dependency-free Node test of the compiled package with
   runtime dependencies only on Node 18/20/22/24; build first. It uses synthetic
   fetch responses, not live media, and is separate from Vitest discovery.

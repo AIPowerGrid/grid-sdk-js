@@ -57,6 +57,9 @@ the separate candidate durable-video client behind `client.grid`.
   opening pins before HTTP. Core owns fixed bucket, decoder, controls, worker
   capabilities, admission and pricing; source-health features alone do not
   qualify appearance. x402 is not implemented.
+  Typed optional `reference_attention_strength` passes through unchanged,
+  separately from denoising/motion controls. Omission inserts no new default;
+  Core remains the authority for validation, graph selection and intent.
 
 ## Work Guidance
 

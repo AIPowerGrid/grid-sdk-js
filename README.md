@@ -162,11 +162,14 @@ The separate, unpriced **`LTX-2.5 Dev BF16 Ingredients`** candidate accepts
 frame-matched `reference_video`, at 121 frames/24 fps, 40 steps and CFG 2.
 Set explicit `size: '768x448'` and no `image`/`keyframes`. `reference_strength`
 defaults to 1; with video, `guide_strength` defaults to 0.5 and
-`motion_attention_strength` to 0.25. Core validates the controls and decodes
+`motion_attention_strength` to 0.25. Optional `reference_attention_strength`
+is independently bounded to (0, 1]; omission preserves the original appearance
+guide rather than silently choosing a new default. Core validates the controls and decodes
 every source. The SDK forwards them; it never executes an adapter or turns the
 PNG into frame zero. Source-health flags do not enable this recipe or qualify
-its visuals. It remains dark pending native Grid testing and model-use
-clearance. x402 is a proposal, not an implemented SDK payment rail.
+its visuals. Private native test-credit lifecycle evidence exists;
+public/purchased-credit acceptance, measured quality and model-use clearance
+remain gates. x402 is a proposal, not an implemented SDK payment rail.
 
 ## It's just OpenAI underneath
 

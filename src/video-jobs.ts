@@ -26,6 +26,8 @@ export interface VideoJobRequest {
   /** Appearance-only PNG; a separate gated recipe, never an opening-frame pin. */
   reference_image?: string;
   reference_strength?: number;
+  /** Optional appearance-guide attention; does not change denoising or motion. */
+  reference_attention_strength?: number;
   guide_strength?: number;
   motion_attention_strength?: number;
   [field: string]: unknown;

@@ -186,9 +186,9 @@ describe('durable candidate video jobs', () => {
     );
   });
 
-  it.each([false, true])(
-    'keeps appearance separate through lost-reply recovery (motion=%s)',
-    async (motion) => {
+  it.each([[false, undefined], [true, undefined], [false, 0.25], [true, 0.25]] as const)(
+    'keeps appearance separate through lost-reply recovery (motion=%s, attention=%s)',
+    async (motion, attention) => {
       health();
       const model = 'LTX-2.5 Dev BF16 Ingredients';
       const body: VideoJobRequest = {
@@ -199,6 +199,7 @@ describe('durable candidate video jobs', () => {
         reference_image: 'data:image/png;base64,fixture',
         reference_audio: 'data:audio/wav;base64,fixture',
         reference_strength: 1,
+        ...(attention === undefined ? {} : { reference_attention_strength: attention }),
         ...(motion
           ? {
               reference_video: 'data:video/mp4;base64,fixture',

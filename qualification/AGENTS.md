@@ -12,6 +12,9 @@ and records actual requests. Never use production keys/URLs, inherit proxy or
 Node-option environment variables, or print source bodies/credentials. Require
 one POST, GET-only lost-reply/terminal recovery, and 401/403/404 isolation after
 admission rollback. No real workers, storage or funds are involved.
+The peer exercises ordinary generated/audio/video and separate appearance
+audio/motion requests, with attention omitted or explicit. Do not infer GPU,
+appearance fidelity or pricing authority from successful HTTP recovery.
 
 Build with `npm run build` first. The fixture must have one immutable body/key,
 pending/completed envelopes and an explicit lost-reply flag. Require one POST
