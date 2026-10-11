@@ -11,6 +11,9 @@ media helper.
 - `grid.test.ts` - synchronous `/v1` image/video request shapes and responses.
 - `video-jobs.test.ts` - candidate source-aware submission, delegated auth,
   uncertain replies, GET-only recovery, bounded polling and immutable identity.
+  Appearance cases keep reference PNG/audio/optional video and controls intact
+  after reply loss; mixed opening pins reject before HTTP. These synthetic
+  inline strings are wire fixtures, not decoded or native quality evidence.
 - `runtime.smoke.mjs` - dependency-free Node test of the compiled package with
   runtime dependencies only on Node 18/20/22/24; build first. It uses synthetic
   fetch responses, not live media, and is separate from Vitest discovery.

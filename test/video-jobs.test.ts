@@ -155,6 +155,14 @@ describe('durable candidate video jobs', () => {
     { n: 2 },
     { image: 'x', keyframes: [{ image: 'y' }] },
     { reference_video: 'x' },
+    { reference_image: 'x' },
+    { reference_image: 'x', reference_audio: 'y', size: '768x448', image: 'z' },
+    {
+      reference_image: 'x',
+      reference_audio: 'y',
+      size: '768x448',
+      keyframes: [{ image: 'z' }],
+    },
   ])('refuses invalid input before network: %j', async (changes) => {
     await expect(
       new VideoJobs('fixture', BASE).submit(
@@ -177,6 +185,44 @@ describe('durable candidate video jobs', () => {
       MODEL,
     );
   });
+
+  it.each([false, true])(
+    'keeps appearance separate through lost-reply recovery (motion=%s)',
+    async (motion) => {
+      health();
+      const model = 'LTX-2.5 Dev BF16 Ingredients';
+      const body: VideoJobRequest = {
+        ...BODY,
+        model,
+        size: '768x448',
+        frames: 121,
+        reference_image: 'data:image/png;base64,fixture',
+        reference_audio: 'data:audio/wav;base64,fixture',
+        reference_strength: 1,
+        ...(motion
+          ? {
+              reference_video: 'data:video/mp4;base64,fixture',
+              guide_strength: 0.5,
+              motion_attention_strength: 0.25,
+            }
+          : {}),
+      };
+      fetchMock.mockRejectedValueOnce(new Error('private fixture'));
+      const jobs = new VideoJobs('fixture', BASE);
+      await expect(
+        jobs.submit(body, { idempotencyKey: KEY }),
+      ).rejects.toMatchObject({ submissionUncertain: true });
+      const wire = JSON.parse(fetchMock.mock.calls[1][1]!.body as string);
+      expect(wire).toEqual(body);
+      expect(wire).not.toHaveProperty('image');
+      expect(wire).not.toHaveProperty('keyframes');
+      fetchMock.mockResolvedValueOnce(reply(receipt('queued', { model })));
+      expect((await jobs.recover({ idempotencyKey: KEY })).model).toBe(model);
+      expect(
+        fetchMock.mock.calls.filter(([, init]) => init!.method === 'POST'),
+      ).toHaveLength(1);
+    },
+  );
 
   it('recovers a lost POST reply by header without retries or health checks', async () => {
     health();

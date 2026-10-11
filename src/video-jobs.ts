@@ -23,6 +23,11 @@ export interface VideoJobRequest {
   reference_audio?: string;
   /** Inline MP4; requires separate reference_audio and explicit size. */
   reference_video?: string;
+  /** Appearance-only PNG; a separate gated recipe, never an opening-frame pin. */
+  reference_image?: string;
+  reference_strength?: number;
+  guide_strength?: number;
+  motion_attention_strength?: number;
   [field: string]: unknown;
 }
 
@@ -248,7 +253,14 @@ function submission(body: VideoJobRequest): {
     (snapshot.image &&
       Array.isArray(snapshot.keyframes) &&
       snapshot.keyframes.length) ||
-    (snapshot.reference_video && (!snapshot.reference_audio || !snapshot.size))
+    (snapshot.reference_video &&
+      (!snapshot.reference_audio || !snapshot.size)) ||
+    (snapshot.reference_image &&
+      (snapshot.image ||
+        (snapshot.keyframes &&
+          (!Array.isArray(snapshot.keyframes) || snapshot.keyframes.length)) ||
+        !snapshot.reference_audio ||
+        !snapshot.size))
   ) {
     throw new TypeError(
       'invalid video body; explicit model, prompt and positive exact cost ceiling required',
@@ -258,7 +270,11 @@ function submission(body: VideoJobRequest): {
     encoded,
     model: snapshot.model,
     ceiling: snapshot.max_cost_micro_usd,
-    source: !!(snapshot.reference_audio || snapshot.reference_video),
+    source: !!(
+      snapshot.reference_audio ||
+      snapshot.reference_video ||
+      snapshot.reference_image
+    ),
   };
 }
 

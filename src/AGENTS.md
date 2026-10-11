@@ -51,7 +51,12 @@ the separate candidate durable-video client behind `client.grid`.
   exposes no raw response/prompt/credential in errors. Optional delegated
   tokens use `X-Grid-User-Token`, never query parameters. No asset downloading.
 - `image`/`keyframes` pin actual frames, not appearance-only identity. Inline
-  audio/video inputs remain server-validated/gated, and x402 is not implemented.
+  audio/video inputs remain server-validated/gated. Separate `reference_image`
+  PNG and reference/motion strengths forward the dark Ingredients contract,
+  never create frame pins, and require explicit audio/size. Reject mixed
+  opening pins before HTTP. Core owns fixed bucket, decoder, controls, worker
+  capabilities, admission and pricing; source-health features alone do not
+  qualify appearance. x402 is not implemented.
 
 ## Work Guidance
 
