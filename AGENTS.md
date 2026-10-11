@@ -48,6 +48,8 @@ surface does not cover. Its npm package name is `grid-ai`. Co-canonical peer of 
   its own AGENTS.md. **All work lands here.**
 - `test/` — Vitest unit tests (`client.test.ts`, `grid.test.ts`). Mirror `src/` one-to-one.
 - `dist/` — `tsc` build output. Generated; never edit by hand.
+- `qualification/` - built SDK wire replay of synthetic receipts captured from
+  Core SQL/auth tests; does not call production or independently verify media.
 - `package.json` / `tsconfig.json` — manifest + TS config (ESM, strict, target ES2021).
   Package metadata, source SPDX headers, and `LICENSE` all use MIT.
 - **`.github/workflows/secret-scan.yml`, `.gitleaks.toml`, and `.gitleaksignore`** —
@@ -55,6 +57,9 @@ surface does not cover. Its npm package name is `grid-ai`. Co-canonical peer of 
 - **`.github/workflows/release.yml`** — release-published, tag-bound npm trusted
   publishing. It uses GitHub OIDC and the protected `npm` environment; registry
   tokens do not belong in GitHub secrets.
+- **`.github/workflows/test.yml`** - PR/main contracts, build, full dependency
+  audit on Node 24 plus compiled/runtime-only smoke on Node 18/20/22/24 and
+  package inspection; no publication permissions.
 
 ## Local Contracts
 
@@ -71,6 +76,14 @@ surface does not cover. Its npm package name is `grid-ai`. Co-canonical peer of 
   native `client.grid` media calls both live under `/v1`. `GridRaw` POSTs SYNCHRONOUSLY to
   `/v1/images/generations` and `/v1/videos/generations` (the call returns the finished result;
   no submit/poll). The retired horde `/api/v2` async queue is gone — do not reintroduce it.
+- **Separate candidate lifecycle:** lazy `client.grid.videoJobs` uses the
+  default-off `/v1/videos/jobs` contract; existing generation methods remain
+  unchanged. It performs one POST plus GET-only recovery, with a caller-saved
+  UUIDv4 key, explicit model and exact positive spending ceiling. No automatic
+  retry/fallback, asset download, local credit ledger or x402 payment rail.
+- The candidate is an independently implemented MIT wire client, not copied
+  AGPL Core/Director source. A closed job is not proof of a refund; output
+  metadata is not codec, identity, motion or quality verification.
 - **ESM only:** `"type": "module"`; intra-package imports use the `.js` extension.
 - **Release identity:** publish only a non-prerelease GitHub Release whose
   `v<version>` tag exactly matches `package.json`. The release workflow must
@@ -87,6 +100,8 @@ surface does not cover. Its npm package name is `grid-ai`. Co-canonical peer of 
 
 - `npm run build` — `tsc` must compile clean under `strict`.
 - `npm test` — `vitest run`.
+- Development tests use pinned Vitest 5 and require Node 22.12+ or Node 24.
+  Published runtime support remains Node 18+; test tooling is not shipped.
 - `npm audit` must report zero known vulnerabilities before publishing.
 - `npm pack --dry-run` must contain only the intended `dist`, README, license,
   and package metadata payload.
@@ -97,3 +112,4 @@ surface does not cover. Its npm package name is `grid-ai`. Co-canonical peer of 
 
 - [src/AGENTS.md](src/AGENTS.md) — SDK source: the `Grid` client + `GridRaw` native access.
 - [test/AGENTS.md](test/AGENTS.md) — mocked SDK contract tests.
+- [qualification/AGENTS.md](qualification/AGENTS.md) - Core wire replay qualification.

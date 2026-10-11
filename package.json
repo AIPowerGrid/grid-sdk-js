@@ -1,6 +1,6 @@
 {
   "name": "grid-ai",
-  "version": "0.1.1",
+  "version": "0.2.0-preview.1",
   "description": "JavaScript/TypeScript SDK for AI Power Grid open-model, OpenAI-compatible inference.",
   "type": "module",
   "main": "dist/index.js",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "typescript": "^5.4.0",
-    "vitest": "^3.2.7"
+    "vitest": "5.0.3"
   },
   "engines": {
     "node": ">=18"

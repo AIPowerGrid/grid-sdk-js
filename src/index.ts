@@ -25,6 +25,8 @@ import OpenAI, { type ClientOptions } from 'openai';
 import { GridRaw } from './grid.js';
 
 export { GridRaw } from './grid.js';
+export { VideoJobs, VideoJobError } from './video-jobs.js';
+export type { VideoJob, VideoJobState, VideoJobRequest, VideoJobSelector, VideoJobOptions, VideoMedia, VideoResult } from './video-jobs.js';
 export type { GenerateOptions, GridCredits, ImageOptions, VideoOptions } from './grid.js';
 
 export const DEFAULT_BASE_URL = 'https://api.aipowergrid.io/v1';

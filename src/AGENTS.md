@@ -2,8 +2,8 @@
 
 ## Purpose
 
-The two-file SDK: the OpenAI-compatible `Grid` client and the `GridRaw` native-queue
-client behind `client.grid`.
+The OpenAI-compatible `Grid` client, the legacy synchronous media helpers and
+the separate candidate durable-video client behind `client.grid`.
 
 ## Ownership
 
@@ -13,6 +13,8 @@ client behind `client.grid`.
 - `grid.ts` — `GridRaw`: native SYNCHRONOUS media access at `/v1/images/generations` and
   `/v1/videos/generations` for video / advanced image. The call returns the finished result
   (hosted `media.aipg.art` URLs); no submit/poll and no `/api/v2` derivation.
+- `video-jobs.ts` - `VideoJobs`, typed requests/receipts/options and sanitized
+  `VideoJobError`. Lazily reached via `GridRaw.videoJobs`.
 
 ## Local Contracts
 
@@ -37,6 +39,19 @@ client behind `client.grid`.
   flowing through `params` unchanged — do not allowlist them.
 - `credits()` reads Core's canonical three-pocket account view. Never derive
   promotional or daily balances in the SDK.
+- Candidate `videoJobs.submit(body, { idempotencyKey })` snapshots finite JSON,
+  requires explicit model/prompt and positive safe-integer micro-USD ceiling,
+  checks credential-free `/health` features and sends one POST. Core owns
+  pricing/admission/holds; never retry POST or switch models.
+- `recover` selects a canonical UUID job or UUIDv4 header key; wait/recover
+  use GET only and bypass capability preflight. Polling has a monotonic deadline,
+  AbortSignal cancellation and stable job/model/hash/hold/ceiling checks.
+  `closed_without_result` is not refund proof.
+- New video transport refuses redirects, bounds JSON replies to 64 KiB and
+  exposes no raw response/prompt/credential in errors. Optional delegated
+  tokens use `X-Grid-User-Token`, never query parameters. No asset downloading.
+- `image`/`keyframes` pin actual frames, not appearance-only identity. Inline
+  audio/video inputs remain server-validated/gated, and x402 is not implemented.
 
 ## Work Guidance
 

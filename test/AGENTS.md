@@ -9,6 +9,11 @@ media helper.
 
 - `client.test.ts` - constructor, defaults, aliases, and OpenAI-compatible client.
 - `grid.test.ts` - synchronous `/v1` image/video request shapes and responses.
+- `video-jobs.test.ts` - candidate source-aware submission, delegated auth,
+  uncertain replies, GET-only recovery, bounded polling and immutable identity.
+- `runtime.smoke.mjs` - dependency-free Node test of the compiled package with
+  runtime dependencies only on Node 18/20/22/24; build first. It uses synthetic
+  fetch responses, not live media, and is separate from Vitest discovery.
 
 ## Local Contracts
 
@@ -16,6 +21,9 @@ media helper.
 - Assert exact method, URL, headers, body, sync semantics, and public exports.
 - Keep tests paired with `src/` behavior and cover async/error paths as well as
   successful results.
+- Preserve legacy custom-base construction. The candidate helper validates
+  its own `/v1` base without tightening old generation behavior. Mock actual
+  streamed Response bodies, not only `json()` return values.
 
 ## Work Guidance
 
