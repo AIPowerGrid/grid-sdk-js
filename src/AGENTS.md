@@ -15,6 +15,8 @@ the separate candidate durable-video client behind `client.grid`.
   (hosted `media.aipg.art` URLs); no submit/poll and no `/api/v2` derivation.
 - `video-jobs.ts` - `VideoJobs`, typed requests/receipts/options and sanitized
   `VideoJobError`. Lazily reached via `GridRaw.videoJobs`.
+- `video-payments.ts` - quote policy/nonce checks, unsigned EIP-712 data,
+  explicit callbacks, hidden signed payloads and sanitized errors.
 
 ## Local Contracts
 
@@ -56,10 +58,21 @@ the separate candidate durable-video client behind `client.grid`.
   never create frame pins, and require explicit audio/size. Reject mixed
   opening pins before HTTP. Core owns fixed bucket, decoder, controls, worker
   capabilities, admission and pricing; source-health features alone do not
-  qualify appearance. x402 is not implemented.
+  qualify appearance. x402 collection is not implemented.
   Typed optional `reference_attention_strength` passes through unchanged,
   separately from denoising/motion controls. Omission inserts no new default;
   Core remains the authority for validation, graph selection and intent.
+- Payment preparation requires independent expected model/intent/recipient/
+  network/ceiling and a trusted binding-v2 quote. Never treat a copied response
+  hash as verified intent or claim the hidden plan was proved. Check canonical
+  Base USDC/domain/nonce/safe integers and the five-minute window. Built-in Web
+  Crypto hashes the public commitment; Node 18 can explicitly supply
+  `node:crypto.webcrypto.subtle`. No runtime dependency or Node-only import is
+  added to the SDK; declarations do not require a browser DOM library.
+- Preview flags block callbacks. Enabled callbacks sign only; recheck expiry
+  and sanitize errors. Signed data is private and exported in fresh explicit
+  payload views, never JSON/repr by default. Byte format is not ECDSA/account,
+  token, replay or funding verification. No HTTP, retries, keys or broadcasting.
 
 ## Work Guidance
 

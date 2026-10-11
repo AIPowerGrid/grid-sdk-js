@@ -85,6 +85,10 @@ surface does not cover. Its npm package name is `grid-ai`. Co-canonical peer of 
 - The candidate is an independently implemented MIT wire client, not copied
   AGPL Core/Director source. A closed job is not proof of a refund; output
   metadata is not codec, identity, motion or quality verification.
+- Independently implemented MIT payment preparation checks a trusted quote
+  against retained intent/policy and delegates explicit signing to a wallet
+  callback. No dependency, HTTP, raw-key handling or sender is added. Actual
+  preview quotes block signing; no payment rail is enabled.
 - **ESM only:** `"type": "module"`; intra-package imports use the `.js` extension.
 - **Release identity:** publish only a non-prerelease GitHub Release whose
   `v<version>` tag exactly matches `package.json`. The release workflow must

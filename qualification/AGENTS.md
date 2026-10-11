@@ -19,3 +19,11 @@ appearance fidelity or pricing authority from successful HTTP recovery.
 Build with `npm run build` first. The fixture must have one immutable body/key,
 pending/completed envelopes and an explicit lost-reply flag. Require one POST
 and GET-only recovery; emit bounded synthetic results for the parent test.
+
+`video-payments.mjs` is separate private two-phase IPC with the Python/Core
+qualification parent. Use only its synthetic public quote/policy and unfunded
+signature, never live keys, credentials or funds. Verify actual preview blocks
+the callback; only a local future-enabled copy tests wallet callback forwarding.
+Return unsigned typed data, then transient signed payload through private pipes
+for real Core verification. Never log/export signatures as evidence. There are
+no network calls, key handling, broadcast, receipts, replay claims or job holds.

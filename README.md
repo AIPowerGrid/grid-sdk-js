@@ -96,7 +96,7 @@ do not use the separate video-jobs lifecycle below.
 
 ## Candidate Durable Video Jobs
 
-This branch's `0.2.0-preview.1` adds `client.grid.videoJobs`. It requires the
+This branch's `0.2.0-preview.2` adds `client.grid.videoJobs`. It requires the
 candidate Core `/v1/videos/jobs` contract, which is default-off and **not a
 public production feature yet**. Installing this SDK does not enable admission,
 qualify a worker or authorize spending.
@@ -169,7 +169,37 @@ every source. The SDK forwards them; it never executes an adapter or turns the
 PNG into frame zero. Source-health flags do not enable this recipe or qualify
 its visuals. Private native test-credit lifecycle evidence exists;
 public/purchased-credit acceptance, measured quality and model-use clearance
-remain gates. x402 is a proposal, not an implemented SDK payment rail.
+remain gates. x402 collection is a proposal, not an enabled SDK payment rail.
+
+## Candidate Video Wallet Preparation
+
+`prepareVideoAuthorization` checks a trusted authenticated Core quote against
+your independently retained model, normalized intent hash, reviewed recipient,
+network and exact ceiling. It creates unsigned JSON-RPC EIP-712 data without
+keys, HTTP or a crypto dependency.
+
+```ts
+import { prepareVideoAuthorization } from 'grid-ai';
+
+const request = await prepareVideoAuthorization(quote, {
+  payer: walletAddress,
+  expectedModel: model,
+  expectedRequestHash: savedIntentHash,
+  expectedRecipient: reviewedRecipient,
+  network: 'eip155:84532',
+  maxCostMicroUsd: 100_000,
+});
+```
+
+Use built-in Web Crypto; Node 18 can pass `subtle: webcrypto.subtle` from
+`node:crypto` when global crypto is absent. Core preview quotes currently return
+`payment_enabled:false`; `signVideoAuthorization` blocks those before calling
+any wallet. Do not flip that flag yourself or prompt a real wallet. No payment
+endpoint or sender exists. Future enabled callbacks sign only; expiry is checked
+again afterwards. Core must independently verify signatures, live accounts/
+tokens, nonce claims and received funds. Never log or persist
+`SignedVideoAuthorization.payload` as ordinary evidence. A signature is not
+a completed payment or generation.
 
 ## It's just OpenAI underneath
 

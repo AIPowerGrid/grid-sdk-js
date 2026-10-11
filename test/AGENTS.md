@@ -19,6 +19,11 @@ media helper.
 - `runtime.smoke.mjs` - dependency-free Node test of the compiled package with
   runtime dependencies only on Node 18/20/22/24; build first. It uses synthetic
   fetch responses, not live media, and is separate from Vitest discovery.
+  It also covers quote preparation and preview signer refusal with explicit
+  built-in Web Crypto for environments without global crypto.
+- `video-payments.test.ts` - independent policy/domain/nonce/type/window bounds,
+  immutable views, preview-before-callback and signer/expiry errors. Synthetic
+  callbacks are not live wallet, ECDSA, chain or funding qualification.
 
 ## Local Contracts
 
