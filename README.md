@@ -172,8 +172,13 @@ switch packages.
 Optional Core wire replay lives in `qualification/core-wire.mjs`; the Python
 peer's `qualification/test_core_video_jobs.py` supplies actual synthetic-Core
 receipts after scoped-auth/SQL tests. Build this SDK first. This proves receipt
-parity and no-resubmission behavior, not live JavaScript HTTP-to-Core, GPU output,
-funded R2 lifecycle or production availability.
+parity and no-resubmission behavior. The separate `qualification/core-http.mjs`
+uses unmocked fetch against the Python peer's temporary loopback Core server.
+It proves actual authenticated submission and GET recovery, including a
+post-commit 503 and 401/403/404 isolation after admission rollback. Fixture keys
+arrive only on stdin; no production URL or inherited proxy environment is used.
+These optional checks do not prove GPU output, funded R2 lifecycle, a physical
+network outage or production availability.
 
 Development: use Node 22.12+ or Node 24 for `npm ci`, `npm run build` and
 `npm test` (pinned Vitest 5). The published SDK runtime still supports Node 18+.

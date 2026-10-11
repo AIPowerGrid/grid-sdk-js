@@ -49,7 +49,8 @@ surface does not cover. Its npm package name is `grid-ai`. Co-canonical peer of 
 - `test/` — Vitest unit tests (`client.test.ts`, `grid.test.ts`). Mirror `src/` one-to-one.
 - `dist/` — `tsc` build output. Generated; never edit by hand.
 - `qualification/` - built SDK wire replay of synthetic receipts captured from
-  Core SQL/auth tests; does not call production or independently verify media.
+  Core SQL/auth tests, plus real JS HTTP against an isolated loopback Core
+  server. Does not call production or independently verify media.
 - `package.json` / `tsconfig.json` — manifest + TS config (ESM, strict, target ES2021).
   Package metadata, source SPDX headers, and `LICENSE` all use MIT.
 - **`.github/workflows/secret-scan.yml`, `.gitleaks.toml`, and `.gitleaksignore`** —
