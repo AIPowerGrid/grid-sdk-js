@@ -132,7 +132,7 @@ test("compiled SDK wallet preparation needs no development dependencies", async 
   const asset = "0x036cbd53842c5426634e7929541ec2318f3dcf7e";
   const quote = {
     schema: "aipg.video-quote.v1",
-    binding_schema: "aipg.video-quote-binding.v2",
+    binding_schema: "aipg.video-quote-binding.v3",
     quote_id: "11111111-1111-4111-8111-111111111111",
     job_id: "22222222-2222-4222-8222-222222222222",
     model: "fixture",
@@ -147,6 +147,8 @@ test("compiled SDK wallet preparation needs no development dependencies", async 
     max_cost_micro_usd: 100_000,
     payment: {
       scheme: "exact",
+      payment_flow: "upfront",
+      asset_transfer_method: "eip3009",
       network: "eip155:84532",
       asset,
       pay_to: "0x" + "1".repeat(40),

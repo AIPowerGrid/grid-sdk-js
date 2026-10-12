@@ -62,6 +62,8 @@ export interface VideoAuthorizationPolicy {
   expectedRecipient: string;
   network: "eip155:8453" | "eip155:84532";
   maxCostMicroUsd: number;
+  /** Explicitly accept settlement before rendering; defaults to refusing wallet callbacks. */
+  acceptUpfrontPayment?: boolean;
   /** Supply node:crypto.webcrypto.subtle on Node 18 if global Web Crypto is absent. */
   subtle?: VideoDigestProvider;
 }
@@ -134,6 +136,7 @@ export class VideoAuthorizationRequest {
     readonly expires: number,
     readonly paymentEnabled: boolean,
     encoded: string,
+    readonly acceptsUpfrontPayment: boolean = false,
   ) {
     this.#encoded = encoded;
     Object.freeze(this);
@@ -150,6 +153,8 @@ export class VideoAuthorizationRequest {
 
   assertSignable(): void {
     if (!this.paymentEnabled) throw new VideoPaymentError("payment_disabled");
+    if (this.acceptsUpfrontPayment !== true)
+      throw new VideoPaymentError("upfront_payment_not_accepted");
     if (Math.floor(Date.now() / 1000) >= this.expires)
       throw new VideoPaymentError("expired_quote");
   }
@@ -194,6 +199,12 @@ export async function prepareVideoAuthorization(
       throw new Error("invalid quote");
     const value = object(JSON.parse(encoded) as unknown);
     const ceiling = integer(policy.maxCostMicroUsd);
+    if (
+      policy.acceptUpfrontPayment !== undefined &&
+      typeof policy.acceptUpfrontPayment !== "boolean"
+    )
+      throw new Error("invalid upfront policy");
+    const upfrontAccepted = policy.acceptUpfrontPayment === true;
     const intent = digest(policy.expectedRequestHash);
     const payer = address(policy.payer),
       recipient = address(policy.expectedRecipient);
@@ -207,7 +218,7 @@ export async function prepareVideoAuthorization(
       expires = integer(value.expires);
     if (
       value.schema !== "aipg.video-quote.v1" ||
-      value.binding_schema !== "aipg.video-quote-binding.v2" ||
+      value.binding_schema !== "aipg.video-quote-binding.v3" ||
       value.state !== "quoted" ||
       typeof value.payment_enabled !== "boolean" ||
       typeof policy.expectedModel !== "string" ||
@@ -254,6 +265,8 @@ export async function prepareVideoAuthorization(
     };
     if (
       payment.scheme !== "exact" ||
+      payment.payment_flow !== "upfront" ||
+      payment.asset_transfer_method !== "eip3009" ||
       payment.network !== policy.network ||
       payment.asset !== chosen.asset ||
       address(payment.pay_to) !== recipient ||
@@ -291,6 +304,7 @@ export async function prepareVideoAuthorization(
       expires,
       value.payment_enabled,
       JSON.stringify({ authorization, typedData }),
+      upfrontAccepted,
     );
   } catch (error) {
     if (error instanceof VideoPaymentError) throw error;

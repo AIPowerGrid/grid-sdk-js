@@ -24,6 +24,8 @@ and GET-only recovery; emit bounded synthetic results for the parent test.
 qualification parent. Use only its synthetic public quote/policy and unfunded
 signature, never live keys, credentials or funds. Verify actual preview blocks
 the callback; only a local future-enabled copy tests wallet callback forwarding.
+That enabled copy must still block omitted/false upfront consent, then accept
+only explicit binding-v3 upfront/EIP-3009 terms. Neither state enables a server.
 Return unsigned typed data, then transient signed payload through private pipes
 for real Core verification. Never log/export signatures as evidence. There are
 no network calls, key handling, broadcast, receipts, replay claims or job holds.

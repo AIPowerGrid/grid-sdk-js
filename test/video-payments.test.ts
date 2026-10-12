@@ -25,7 +25,7 @@ async function fixture() {
   const asset = "0x036cbd53842c5426634e7929541ec2318f3dcf7e";
   const quote = {
     schema: "aipg.video-quote.v1",
-    binding_schema: "aipg.video-quote-binding.v2",
+    binding_schema: "aipg.video-quote-binding.v3",
     quote_id: "11111111-1111-4111-8111-111111111111",
     job_id: "22222222-2222-4222-8222-222222222222",
     state: "quoted",
@@ -40,6 +40,8 @@ async function fixture() {
     max_cost_micro_usd: 100_000,
     payment: {
       scheme: "exact",
+      payment_flow: "upfront",
+      asset_transfer_method: "eip3009",
       network: "eip155:84532",
       asset,
       pay_to: "0x" + "1".repeat(40),
@@ -61,12 +63,101 @@ async function fixture() {
     expectedRecipient: quote.payment.pay_to,
     network: "eip155:84532" as const,
     maxCostMicroUsd: 100_000,
+    acceptUpfrontPayment: true,
     subtle: webcrypto.subtle,
   };
   return { quote, policy };
 }
 
 describe("explicit video wallet preparation", () => {
+  it.each([undefined, false])(
+    "requires explicit upfront acceptance before signing: %s",
+    async (accept) => {
+      const { quote, policy } = await fixture();
+      quote.payment_enabled = true;
+      const request = await prepareVideoAuthorization(quote, {
+        ...policy,
+        acceptUpfrontPayment: accept,
+      });
+      const signer = vi.fn(async () => SIG);
+      await expect(
+        signVideoAuthorization(request, signer),
+      ).rejects.toMatchObject({ kind: "upfront_payment_not_accepted" });
+      expect(signer).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each(["authorization", "escrow", "", "UPFRONT"])(
+    "rejects non-upfront terms: %s",
+    async (flow) => {
+      const { quote, policy } = await fixture();
+      quote.payment.payment_flow = flow;
+      await expect(
+        prepareVideoAuthorization(quote, policy),
+      ).rejects.toBeInstanceOf(VideoPaymentError);
+    },
+  );
+
+  it.each(["payment_flow", "asset_transfer_method"])(
+    "rejects absent explicit terms: %s",
+    async (term) => {
+      const { quote, policy } = await fixture();
+      Reflect.deleteProperty(quote.payment, term);
+      await expect(
+        prepareVideoAuthorization(quote, policy),
+      ).rejects.toBeInstanceOf(VideoPaymentError);
+    },
+  );
+
+  it("rejects another asset transfer method", async () => {
+    const { quote, policy } = await fixture();
+    quote.payment.asset_transfer_method = "permit2";
+    await expect(
+      prepareVideoAuthorization(quote, policy),
+    ).rejects.toBeInstanceOf(VideoPaymentError);
+  });
+
+  it.each(["true", 1, null])(
+    "does not coerce upfront consent: %s",
+    async (accept) => {
+      const { quote, policy } = await fixture();
+      await expect(
+        prepareVideoAuthorization(quote, {
+          ...policy,
+          acceptUpfrontPayment: accept as never,
+        }),
+      ).rejects.toBeInstanceOf(VideoPaymentError);
+    },
+  );
+
+  it("does not upgrade a legacy v2 quote to upfront signing", async () => {
+    const { quote, policy } = await fixture();
+    quote.binding_schema = "aipg.video-quote-binding.v2";
+    await expect(
+      prepareVideoAuthorization(quote, policy),
+    ).rejects.toBeInstanceOf(VideoPaymentError);
+  });
+
+  it("freezes the upfront consent before asynchronous digest work", async () => {
+    const { quote, policy } = await fixture();
+    quote.payment_enabled = true;
+    policy.acceptUpfrontPayment = false;
+    const mutable = {
+      ...policy,
+      subtle: {
+        digest: async (algorithm, bytes) => {
+          mutable.acceptUpfrontPayment = true;
+          return webcrypto.subtle.digest(algorithm, bytes);
+        },
+      },
+    };
+    const request = await prepareVideoAuthorization(quote, mutable);
+    const signer = vi.fn(async () => SIG);
+    await expect(signVideoAuthorization(request, signer)).rejects.toMatchObject(
+      { kind: "upfront_payment_not_accepted" },
+    );
+    expect(signer).not.toHaveBeenCalled();
+  });
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(NOW * 1000);

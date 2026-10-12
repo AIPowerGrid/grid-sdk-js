@@ -89,6 +89,9 @@ surface does not cover. Its npm package name is `grid-ai`. Co-canonical peer of 
   against retained intent/policy and delegates explicit signing to a wallet
   callback. No dependency, HTTP, raw-key handling or sender is added. Actual
   preview quotes block signing; no payment rail is enabled.
+  Fresh signing requires binding-v3 upfront/EIP-3009 terms and explicit
+  `acceptUpfrontPayment:true`; default/false refuses callbacks even when enabled.
+  Freeze acceptance before async digest work. Earlier quotes are historical-only.
 - **ESM only:** `"type": "module"`; intra-package imports use the `.js` extension.
 - **Release identity:** publish only a non-prerelease GitHub Release whose
   `v<version>` tag exactly matches `package.json`. The release workflow must

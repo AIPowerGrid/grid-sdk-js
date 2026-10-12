@@ -30,6 +30,28 @@ try {
   if (!blocked || called || quote.payment_enabled !== false)
     throw new Error("preview boundary failed");
   // Model only a future enabled server locally. This does not alter the SQL quote.
+  const { acceptUpfrontPayment: _consent, ...noConsent } = options;
+  let consentBlocked = true;
+  for (const consentOptions of [
+    noConsent,
+    { ...noConsent, acceptUpfrontPayment: false },
+  ]) {
+    const unaccepted = await prepareVideoAuthorization(
+      { ...quote, payment_enabled: true },
+      consentOptions,
+    );
+    let rejected = false;
+    try {
+      await signVideoAuthorization(unaccepted, () => {
+        called = true;
+        throw new Error("must not run");
+      });
+    } catch (error) {
+      rejected = error.kind === "upfront_payment_not_accepted";
+    }
+    consentBlocked = consentBlocked && rejected && !called;
+  }
+  if (!consentBlocked) throw new Error("upfront consent boundary failed");
   const request = await prepareVideoAuthorization(
     { ...quote, payment_enabled: true },
     options,
@@ -38,6 +60,7 @@ try {
     JSON.stringify({
       phase: "unsigned",
       previewBlocked: blocked,
+      consentBlocked,
       called,
       authorization: request.authorization,
       typedData: request.typedData,

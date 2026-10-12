@@ -24,6 +24,8 @@ media helper.
 - `video-payments.test.ts` - independent policy/domain/nonce/type/window bounds,
   immutable views, preview-before-callback and signer/expiry errors. Synthetic
   callbacks are not live wallet, ECDSA, chain or funding qualification.
+  Require binding-v3 upfront/EIP-3009 and explicit acceptance; default/false,
+  coerced consent, legacy terms and mutation during digest work reject signing.
 
 ## Local Contracts
 
