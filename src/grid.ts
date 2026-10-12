@@ -20,6 +20,8 @@
 //   });
 //   console.log(img.data[0].url);
 
+import { VideoJobs } from './video-jobs.js';
+
 export interface GenerateOptions {
   timeoutMs?: number;
 }
@@ -69,8 +71,15 @@ export interface GridCredits {
 export class GridRaw {
   private headers: Record<string, string>;
   private base: string; // …/v1
+  private apiKey: string;
+
+  /** Separate candidate async contract; legacy generation calls are unchanged. */
+  get videoJobs(): VideoJobs {
+    return new VideoJobs(this.apiKey, this.base);
+  }
 
   constructor(apiKey: string, baseURL: string) {
+    this.apiKey = apiKey;
     this.headers = { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
     this.base = baseURL.replace(/\/+$/, ''); // the client base already ends in /v1
   }

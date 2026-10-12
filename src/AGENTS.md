@@ -2,8 +2,8 @@
 
 ## Purpose
 
-The two-file SDK: the OpenAI-compatible `Grid` client and the `GridRaw` native-queue
-client behind `client.grid`.
+The OpenAI-compatible `Grid` client, the legacy synchronous media helpers and
+the separate candidate durable-video client behind `client.grid`.
 
 ## Ownership
 
@@ -13,6 +13,10 @@ client behind `client.grid`.
 - `grid.ts` — `GridRaw`: native SYNCHRONOUS media access at `/v1/images/generations` and
   `/v1/videos/generations` for video / advanced image. The call returns the finished result
   (hosted `media.aipg.art` URLs); no submit/poll and no `/api/v2` derivation.
+- `video-jobs.ts` - `VideoJobs`, typed requests/receipts/options and sanitized
+  `VideoJobError`. Lazily reached via `GridRaw.videoJobs`.
+- `video-payments.ts` - quote policy/nonce checks, unsigned EIP-712 data,
+  explicit callbacks, hidden signed payloads and sanitized errors.
 
 ## Local Contracts
 
@@ -37,6 +41,41 @@ client behind `client.grid`.
   flowing through `params` unchanged — do not allowlist them.
 - `credits()` reads Core's canonical three-pocket account view. Never derive
   promotional or daily balances in the SDK.
+- Candidate `videoJobs.submit(body, { idempotencyKey })` snapshots finite JSON,
+  requires explicit model/prompt and positive safe-integer micro-USD ceiling,
+  checks credential-free `/health` features and sends one POST. Core owns
+  pricing/admission/holds; never retry POST or switch models.
+- `recover` selects a canonical UUID job or UUIDv4 header key; wait/recover
+  use GET only and bypass capability preflight. Polling has a monotonic deadline,
+  AbortSignal cancellation and stable job/model/hash/hold/ceiling checks.
+  `closed_without_result` is not refund proof.
+- New video transport refuses redirects, bounds JSON replies to 64 KiB and
+  exposes no raw response/prompt/credential in errors. Optional delegated
+  tokens use `X-Grid-User-Token`, never query parameters. No asset downloading.
+- `image`/`keyframes` pin actual frames, not appearance-only identity. Inline
+  audio/video inputs remain server-validated/gated. Separate `reference_image`
+  PNG and reference/motion strengths forward the dark Ingredients contract,
+  never create frame pins, and require explicit audio/size. Reject mixed
+  opening pins before HTTP. Core owns fixed bucket, decoder, controls, worker
+  capabilities, admission and pricing; source-health features alone do not
+  qualify appearance. x402 collection is not implemented.
+  Typed optional `reference_attention_strength` passes through unchanged,
+  separately from denoising/motion controls. Omission inserts no new default;
+  Core remains the authority for validation, graph selection and intent.
+- Payment preparation requires independent expected model/intent/recipient/
+  network/ceiling and a trusted binding-v3 upfront/EIP-3009 quote. Never treat a copied response
+  hash as verified intent or claim the hidden plan was proved. Check canonical
+  Base USDC/domain/nonce/safe integers and the five-minute window. Built-in Web
+  Crypto hashes the public commitment; Node 18 can explicitly supply
+  `node:crypto.webcrypto.subtle`. No runtime dependency or Node-only import is
+  added to the SDK; declarations do not require a browser DOM library.
+- Preview flags block callbacks. Enabled quotes require explicit
+  `acceptUpfrontPayment:true`; default/false/coerced consent refuses callbacks.
+  Freeze consent before async digest work; earlier quotes are historical-only.
+  Enabled callbacks sign only; recheck expiry
+  and sanitize errors. Signed data is private and exported in fresh explicit
+  payload views, never JSON/repr by default. Byte format is not ECDSA/account,
+  token, replay or funding verification. No HTTP, retries, keys or broadcasting.
 
 ## Work Guidance
 

@@ -20,15 +20,43 @@
 //     process.stdout.write(chunk.choices[0]?.delta?.content ?? '');
 //   }
 
-import OpenAI, { type ClientOptions } from 'openai';
+import OpenAI, { type ClientOptions } from "openai";
 
-import { GridRaw } from './grid.js';
+import { GridRaw } from "./grid.js";
 
-export { GridRaw } from './grid.js';
-export type { GenerateOptions, GridCredits, ImageOptions, VideoOptions } from './grid.js';
+export { GridRaw } from "./grid.js";
+export { VideoJobs, VideoJobError } from "./video-jobs.js";
+export {
+  VideoAuthorizationRequest,
+  SignedVideoAuthorization,
+  VideoPaymentError,
+  prepareVideoAuthorization,
+  signVideoAuthorization,
+} from "./video-payments.js";
+export type {
+  VideoAuthorizationPolicy,
+  VideoDigestProvider,
+  VideoTransferAuthorization,
+  VideoTypedData,
+} from "./video-payments.js";
+export type {
+  VideoJob,
+  VideoJobState,
+  VideoJobRequest,
+  VideoJobSelector,
+  VideoJobOptions,
+  VideoMedia,
+  VideoResult,
+} from "./video-jobs.js";
+export type {
+  GenerateOptions,
+  GridCredits,
+  ImageOptions,
+  VideoOptions,
+} from "./grid.js";
 
-export const DEFAULT_BASE_URL = 'https://api.aipowergrid.io/v1';
-export const API_KEY_ENV = 'AIPG_API_KEY';
+export const DEFAULT_BASE_URL = "https://api.aipowergrid.io/v1";
+export const API_KEY_ENV = "AIPG_API_KEY";
 
 export interface GridOptions extends ClientOptions {
   /** Grid API key. Falls back to the AIPG_API_KEY environment variable. */
@@ -56,7 +84,7 @@ export class Grid extends OpenAI {
   constructor(options: GridOptions = {}) {
     const apiKey =
       options.apiKey ??
-      (typeof process !== 'undefined' ? process.env?.[API_KEY_ENV] : undefined);
+      (typeof process !== "undefined" ? process.env?.[API_KEY_ENV] : undefined);
 
     if (!apiKey) {
       throw new Error(
